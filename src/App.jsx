@@ -22,7 +22,7 @@ function Home({ trip }) {
         <div className="grid md:grid-cols-2 gap-6 max-w-full">
 
           <div className="bg-white/20 backdrop-blur-xl rounded-xl p-6 shadow">
-            <h2 className="text-xl font-bold mb-3">
+            <h2 className="text-2xl font-bold mb-3 text-orange-400">
               {trip.destination}
             </h2>
             <p>📅 Best Time: {trip.best_time}</p>
@@ -34,7 +34,7 @@ function Home({ trip }) {
           </div>
 
           <div className="bg-white/20 backdrop-blur-xl rounded-xl p-6 shadow">
-            <h3 className="font-semibold mb-3">Top Attractions</h3>
+            <h3 className="text-2xl font-bold text-orange-400  mb-3">Top Attractions</h3>
 
             {trip.top_attractions?.map((a, i) => (
               <div key={i} className="bg-white/30 rounded p-2 mb-2">
@@ -44,17 +44,17 @@ function Home({ trip }) {
           </div>
 
           <div className="bg-white/20 backdrop-blur-xl rounded-xl p-6 shadow md:col-span-2">
-            <h3 className="font-semibold mb-3">Sample Itinerary</h3>
+            <h3 className="text-2xl text-orange-400 font-bold mb-3">Sample Itinerary</h3>
 
             {trip.sample_itinerary?.map(day => (
               <div key={day.day} className="mb-2">
-                <b>Day {day.day}:</b> {day.plan}
+                <b >Day {day.day}:</b> {day.plan}
               </div>
             ))}
           </div>
 
           <div className="bg-white/20 backdrop-blur-xl rounded-xl p-6 shadow md:col-span-2">
-            <h3 className="font-semibold mb-3">Local Tips</h3>
+            <h3 className="font-bold mb-3 text-2xl text-orange-400">Local Tips</h3>
 
             {trip.local_tips?.map((t, i) => (
               <p key={i}>• {t}</p>
@@ -68,14 +68,37 @@ function Home({ trip }) {
 }
 
 
-// ================= PROFILE PAGE =================
-function Profile() {
-  return (
-    <div className="p-8 text-xl">
-      👤 Profile Page (Build later 😎)
-    </div>
-  );
-}
+//================= PROFILE PAGE =================
+
+// const mockUser = {
+//   name: "Srushti",
+//   email: "sru@example.com",
+//   travelStyle: "Adventure",
+//   visitedCountries: ["France", "Japan"],
+//   savedTrips: [
+//     { destination: "Italy", duration_days: 7 },
+//     { destination: "India", duration_days: 10 },
+//   ],
+// };
+
+
+// function Profile({ user }) {
+//   return (
+//     <div className="p-8 text-white max-w-2xl mx-auto bg-white/20 rounded-2xl shadow-lg space-y-6">
+
+//       {/* User Info */}
+//       <div className="border-b border-white/30 pb-4">
+//         <h2 className="text-3xl font-bold mb-2">👤 {user.name}</h2>
+//         <p>Email: {user.email}</p>
+//         <p>Preferred Travel Style: {user.travelStyle}</p>
+//         <p>Visited Countries: {user.visitedCountries.join(", ")}</p>
+//       </div>
+
+
+//     </div>
+//   );
+// }
+
 
 
 // ================= MAIN APP =================
@@ -230,7 +253,7 @@ export default function App() {
         {/* Routes */}
         <Routes>
           <Route path="/" element={<Home trip={trip} />} />
-          <Route path="/profile" element={<Profile />} />
+          {/* <Route path="/profile" element={<Profile  user={mockUser}/>} /> */}
         </Routes>
 
 
