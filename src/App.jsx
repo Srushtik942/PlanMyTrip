@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import Travel from "./Assets/travel.jpg";
 import { motion } from "framer-motion";
-import Footer from "./components/Footer"
+import TravelPlanSkeleton from "./TravelPlanSkeleton";
 
 
 import {
@@ -13,7 +13,7 @@ import {
 } from "react-router-dom";
 
 
-// ================= HOME PAGE =================
+//  HOME PAGE
 function Home({ trip }) {
   return (
     <div className="p-8">
@@ -101,7 +101,7 @@ function Home({ trip }) {
 
 
 
-// ================= MAIN APP =================
+//  MAIN APP
 export default function App() {
 
   const [country, setCountry] = useState("");
@@ -248,6 +248,12 @@ export default function App() {
      {taglines[0]}
   </motion.p>
 )}
+
+
+{/* Skeleton loader */}
+{loading && !trip && <TravelPlanSkeleton text="Generating your travel plan..." />}
+
+
 
 
         {/* Routes */}
