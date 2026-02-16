@@ -21,6 +21,10 @@
 
 ---
 
+![alt text](image.png)
+
+![alt text](image-1.png)
+
 ## Getting Started
 
 ### Prerequisites
@@ -35,3 +39,5 @@
 ```bash
 git clone https://github.com/Srushtik942/PlanMyTrip.git
 cd PlanMyTrip
+
+
