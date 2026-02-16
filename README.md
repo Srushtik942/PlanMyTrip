@@ -1,18 +1,37 @@
-# React + Vite
+# PlanMyTrip
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**PlanMyTrip** is a fullstack web application that helps users plan their trips with AI-powered travel itineraries and catchy tourism taglines. The backend uses Node.js, Express, and OpenRouter AI, while the frontend can be built with any framework (React recommended).
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## React Compiler
+- **AI Travel Plans:** Generates detailed travel itineraries for a given country following a structured JSON schema.
+- **Catchy Taglines:** Creates 3 creative tourism taglines for any country.
+- **Health Check Endpoint:** `/health` to verify the backend server is running.
+- **JSON-only Responses:** Ensures all AI responses are valid JSON for easy parsing and integration.
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+---
 
-Note: This will impact Vite dev & build performances.
+## Tech Stack
 
-## Expanding the ESLint configuration
+- **Backend:** Node.js, Express, Axios, CORS, dotenv
+- **AI Integration:** OpenRouter AI (`nvidia/nemotron-nano-12b-v2-vl`)
+- **Frontend:** React (optional), can be deployed separately (Netlify, Render, Cloudflare Pages, etc.)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js v18+
+- NPM v9+
+- OpenRouter AI API key
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/Srushtik942/PlanMyTrip.git
+cd PlanMyTrip
