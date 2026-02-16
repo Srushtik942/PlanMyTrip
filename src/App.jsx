@@ -115,7 +115,7 @@ export default function App() {
     if(!country) return;
     try{
       const response = await axios.get(
-        "http://localhost:5000/api/taglines",
+        "https://ai-explore.onrender.com/api/taglines",
         {params:{country}}
       );
       setTaglines(response.data.taglines || []);
@@ -133,7 +133,7 @@ export default function App() {
       setLoading(true);
 
       const response = await axios.get(
-        "http://localhost:5000/api/travel-plan",
+        "https://ai-explore.onrender.com/api/travel-plan",
         { params: { country } }
       );
 
