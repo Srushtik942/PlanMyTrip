@@ -1,8 +1,14 @@
-import { useState } from "react";
+import { cache, useState } from "react";
 import axios from "axios";
 import Travel from "./Assets/travel.jpg";
 import { motion } from "framer-motion";
 import TravelPlanSkeleton from "./TravelPlanSkeleton";
+import tip1  from "./Assets/Train.png";
+import tip2 from "./Assets/Places.png";
+import tip3 from "./Assets/Cash.png";
+import tip4 from "./Assets/Rest.png";
+
+const tipImages = [tip1, tip2, tip3, tip4];
 
 
 import {
@@ -19,7 +25,7 @@ function Home({ trip }) {
     <div className="p-8">
 
       {trip && (
-        <div className="grid md:grid-cols-2 gap-6 max-w-full">
+        <div className="grid gap-5 max-w-6xl mx-auto">
 
           <div className="bg-white/20 backdrop-blur-xl rounded-xl p-6 shadow">
             <h2 className="text-2xl font-bold mb-3 text-orange-400">
@@ -43,23 +49,73 @@ function Home({ trip }) {
             ))}
           </div>
 
-          <div className="bg-white/20 backdrop-blur-xl rounded-xl p-6 shadow md:col-span-2">
-            <h3 className="text-2xl text-orange-400 font-bold mb-3">Sample Itinerary</h3>
+         <div className="bg-white/20 backdrop-blur-xl rounded-xl p-6 shadow md:col-span-2">
+  <h3 className="text-2xl text-orange-400 font-bold mb-4">
+    Sample Itinerary
+  </h3>
 
-            {trip.sample_itinerary?.map(day => (
-              <div key={day.day} className="mb-2">
-                <b >Day {day.day}:</b> {day.plan}
-              </div>
-            ))}
-          </div>
+  <div className="space-y-4">
+    {trip.sample_itinerary?.map((day) => (
+      <div
+        key={day.day}
+        className="
+          bg-white/10 rounded-xl p-4
+          border border-white/20
+          hover:scale-[1.02]
+          transition
+        "
+      >
+        <div className="flex items-center justify-between mb-2">
+          <span className="font-bold text-orange-400">
+            Day {day.day}
+          </span>
 
-          <div className="bg-white/20 backdrop-blur-xl rounded-xl p-6 shadow md:col-span-2">
-            <h3 className="font-bold mb-3 text-2xl text-orange-400">Local Tips</h3>
+          <span className="text-xs opacity-70">
+            Suggested plan
+          </span>
+        </div>
 
-            {trip.local_tips?.map((t, i) => (
-              <p key={i}>• {t}</p>
-            ))}
-          </div>
+        <p className="leading-relaxed">
+          {day.plan}
+        </p>
+      </div>
+    ))}
+  </div>
+</div>
+
+
+       <div className="bg-white/20 backdrop-blur-xl rounded-xl p-6 shadow md:col-span-2">
+  <h3 className="font-bold mb-4 text-2xl text-orange-400">
+    Local Tips
+  </h3>
+
+  <div className="grid md:grid-cols-3 gap-4">
+    {trip.local_tips?.map((t, i) => (
+      <div
+        key={i}
+        className="relative rounded-xl overflow-hidden group shadow-lg"
+      >
+        <img
+          src={tipImages[i % tipImages.length]}
+          className="
+            w-full h-44 object-cover
+            group-hover:scale-110
+            transition duration-300
+          "
+        />
+
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-black/55 flex items-end p-4">
+          <p className="text-sm leading-relaxed">
+            {t}
+          </p>
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
+
+
 
         </div>
       )}
@@ -129,15 +185,28 @@ export default function App() {
   const fetchTrip = async () => {
     if (!country) return;
 
+    // const key = `trip-${country.trim().toLocaleLowerCase()}`;
+
     try {
       setLoading(true);
 
+      // const cached = localStorage.getItem(key);
+
+      // if(cached){
+      //   setTrip(JSON.parse(cached));
+      //   return;
+      // }
+
       const response = await axios.get(
         "https://ai-explore.onrender.com/api/travel-plan",
-        { params: { country } }
+        {
+           params: { country } ,
+
+      }
       );
 
       setTrip(response.data);
+      // localStorage.setItem(key, JSON.stringify(response.data));
 
     } catch (error) {
       console.log(error);

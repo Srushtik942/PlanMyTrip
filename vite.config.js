@@ -7,11 +7,21 @@ export default defineConfig({
     react({
       babel: {
         plugins: [
-          ['babel-plugin-react-compiler', {}]   
+          ['babel-plugin-react-compiler', {}]
         ],
       },
     }),
-
     tailwindcss(),
   ],
+
+  server: {
+    proxy: {
+      // forward all /api requests to your backend
+      '/api': {
+        target: 'https://ai-explore.onrender.com',
+        changeOrigin: true,   // ensures the host header matches target
+        secure: false,        // skip SSL check if needed
+      },
+    },
+  },
 })
