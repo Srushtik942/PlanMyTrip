@@ -1,4 +1,4 @@
-import { cache, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import Travel from "./Assets/travel.jpg";
 import { motion } from "framer-motion";
@@ -15,8 +15,13 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Link
+  Link,
+  Navigate
 } from "react-router-dom";
+import { AuthProvider, useAuth } from "./components/AuthContext";
+import Login from "./components/Login";
+import Signup from "./components/Signup";
+import Profile from "./components/Profile";
 
 
 //  HOME PAGE
@@ -114,9 +119,6 @@ function Home({ trip }) {
     ))}
   </div>
 </div>
-
-
-
         </div>
       )}
     </div>
@@ -157,9 +159,13 @@ function Home({ trip }) {
 
 
 
-//  MAIN APP
-export default function App() {
+function PrivateRoute({ element }) {
+  const { user } = useAuth();
+  return user ? element : <Navigate to="/login" replace />;
+}
 
+function AppContent() {
+  const { user, logout } = useAuth();
   const [country, setCountry] = useState("");
   const [trip, setTrip] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -218,9 +224,8 @@ export default function App() {
 
 
   return (
-    <Router>
-
-      <div className="relative min-h-screen text-white">
+      <Router>
+        <div className="relative min-h-screen text-white">
 
         {/* Background */}
         <img
@@ -230,14 +235,10 @@ export default function App() {
         />
         <div className="fixed inset-0 bg-black/60 -z-10"></div>
 
-
-
-        {/* Navbar */}
+        {user && (
         <nav className="flex justify-between items-center px-6 py-4 backdrop-blur-md bg-white/10">
-
           <h1 className="text-xl font-bold text-orange-400 cursor-pointer hover:text-white">PlanMyTrip</h1>
 
-          {/* SEARCH IN NAVBAR */}
           <div className="flex gap-3 w-[420px]">
             <input
               type="text"
@@ -248,18 +249,16 @@ export default function App() {
             />
 
             <button
-              onClick={async()=>{
-                try{
+              onClick={async () => {
+                try {
                   setLoading(true);
                   await fetchTagLines();
-
                   await fetchTrip();
-                }catch(error){
-                  console.log.apply(error);
-                }finally{
-                   setLoading(false);
+                } catch (error) {
+                  console.error(error);
+                } finally {
+                  setLoading(false);
                 }
-
               }}
               disabled={!country || loading}
               className="px-4 bg-orange-500 rounded cursor-pointer"
@@ -268,18 +267,22 @@ export default function App() {
             </button>
           </div>
 
-          {/* Links */}
           <div className="flex gap-6">
             <Link to="/" className="hover:text-orange-400">
               Home
             </Link>
-
             <Link to="/profile" className="hover:text-orange-400">
               Profile
             </Link>
+            <button
+              onClick={() => logout()}
+              className="text-white hover:text-orange-400"
+            >
+              Logout
+            </button>
           </div>
-
         </nav>
+        )}
 
 <h2 className="font-bold text-5xl text-center my-10  flex justify-center gap-3 flex-wrap">
 
@@ -327,13 +330,22 @@ export default function App() {
 
         {/* Routes */}
         <Routes>
-          <Route path="/" element={<Home trip={trip} />} />
-          {/* <Route path="/profile" element={<Profile  user={mockUser}/>} /> */}
+          <Route path="/" element={user ? <Home trip={trip} /> : <Navigate to="/login" replace />} />
+          <Route path="/login" element={user ? <Navigate to="/" replace /> : <Login />} />
+          <Route path="/signup" element={user ? <Navigate to="/" replace /> : <Signup />} />
+          <Route path="/profile" element={<PrivateRoute element={<Profile />} />} />
+          <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
 
+        </div>
+      </Router>
+    );
+}
 
-      </div>
-
-    </Router>
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
