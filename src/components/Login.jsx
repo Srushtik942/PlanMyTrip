@@ -9,6 +9,7 @@ export default function Login() {
   const { login, loading } = useAuth();
   const [form, setForm] = useState({ username: "", password: "" });
   const [error, setError] = useState("");
+  const infoMessage = location.state?.message || "";
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -32,6 +33,12 @@ export default function Login() {
       <div className="max-w-md w-full bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-xl">
         <h1 className="text-3xl font-bold text-orange-400 mb-4">Login</h1>
         <p className="text-sm text-slate-200 mb-6">Sign in to access your travel plans and profile.</p>
+
+        {infoMessage && (
+          <div className="mb-4 rounded-2xl bg-yellow-500/20 border border-yellow-400/30 p-3 text-sm text-yellow-100">
+            {infoMessage}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <label className="block">

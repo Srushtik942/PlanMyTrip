@@ -16,7 +16,9 @@ import {
   Routes,
   Route,
   Link,
-  Navigate
+  Navigate,
+  useNavigate,
+  useLocation
 } from "react-router-dom";
 import { AuthProvider, useAuth } from "./components/AuthContext";
 import Login from "./components/Login";
@@ -26,6 +28,38 @@ import Profile from "./components/Profile";
 
 //  HOME PAGE
 function Home({ trip }) {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [travelMode, setTravelMode] = useState("flight");
+  const [daysToGo, setDaysToGo] = useState(trip?.duration_days || 3);
+  const [destInput, setDestInput] = useState(trip?.destination || "");
+  const [estimate, setEstimate] = useState(null);
+
+  const computeEstimate = () => {
+    if (!trip) return null;
+    const low = trip.estimated_budget?.low || 100;
+    const high = trip.estimated_budget?.high || 300;
+    const base = (low + high) / 2;
+    const perDay = base / (trip.duration_days || Math.max(daysToGo, 1));
+    const modeMultiplier = travelMode === "flight" ? 1.5 : 1.0;
+    const total = Math.round(perDay * daysToGo * modeMultiplier);
+    return total;
+  };
+
+  const handleEstimate = () => {
+    const val = computeEstimate();
+    setEstimate(val);
+  };
+
+  const handleBook = () => {
+    if (!user) {
+      navigate("/login", { state: { message: "You're not logged In. Please login to book.", from: { pathname: "/" } } });
+      return;
+    }
+
+    // For authenticated users - proceed to booking flow (placeholder)
+    navigate("/profile");
+  };
   return (
     <div className="p-8">
 
@@ -119,6 +153,21 @@ function Home({ trip }) {
     ))}
   </div>
 </div>
+
+          {/* Book link (temporary) */}
+          <div className="bg-white/20 backdrop-blur-xl rounded-xl p-6 shadow mt-6 md:col-span-3">
+            <h3 className="text-2xl font-bold text-center text-orange-400 mb-3">Book a Package?</h3>
+            <p className="text-sm text-center text-slate-300">For now, click below to login and continue with booking.</p>
+
+            <div className="mt-4 flex justify-center">
+              <button
+                onClick={() => navigate('/login')}
+                className="px-4 py-2  bg-amber-400 rounded text-white"
+              >
+                Book a Package?
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
@@ -166,6 +215,8 @@ function PrivateRoute({ element }) {
 
 function AppContent() {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [country, setCountry] = useState("");
   const [trip, setTrip] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -224,7 +275,6 @@ function AppContent() {
 
 
   return (
-      <Router>
         <div className="relative min-h-screen text-white">
 
         {/* Background */}
@@ -235,70 +285,91 @@ function AppContent() {
         />
         <div className="fixed inset-0 bg-black/60 -z-10"></div>
 
-        {user && (
-        <nav className="flex justify-between items-center px-6 py-4 backdrop-blur-md bg-white/10">
-          <h1 className="text-xl font-bold text-orange-400 cursor-pointer hover:text-white">PlanMyTrip</h1>
-
-          <div className="flex gap-3 w-[420px]">
-            <input
-              type="text"
-              placeholder="Search country..."
-              value={country}
-              onChange={(e) => setCountry(e.target.value)}
-              className="flex-1 p-2 rounded bg-white/90 text-black"
-            />
-
-            <button
-              onClick={async () => {
-                try {
-                  setLoading(true);
-                  await fetchTagLines();
-                  await fetchTrip();
-                } catch (error) {
-                  console.error(error);
-                } finally {
-                  setLoading(false);
-                }
-              }}
-              disabled={!country || loading}
-              className="px-4 bg-orange-500 rounded cursor-pointer"
-            >
-              {loading ? "Planning..." : "Go"}
-            </button>
+        <nav className="flex items-center justify-between px-6 py-4">
+          <div className="flex items-center gap-6">
+            <h1 className="text-2xl font-bold text-orange-400 cursor-pointer hover:text-white">PlanMyTrip</h1>
           </div>
 
-          <div className="flex gap-6">
-            <Link to="/" className="hover:text-orange-400">
-              Home
-            </Link>
-            <Link to="/profile" className="hover:text-orange-400">
-              Profile
-            </Link>
-            <button
-              onClick={() => logout()}
-              className="text-white hover:text-orange-400"
-            >
-              Logout
-            </button>
+          <div className="hidden md:flex items-center justify-center">
+            <div className="bg-white rounded-full px-3 py-1 flex items-center gap-6 border">
+              <Link to="/" className="px-4 py-1 rounded-full bg-black text-white">Home</Link>
+              <a href="#" className="text-sm text-slate-700">Travel Guides</a>
+              <a href="#" className="text-sm text-slate-700">Go Pro</a>
+              <a href="#" className="text-sm text-slate-700">Blog</a>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4">
+            {user ? (
+              <>
+                <Link to="/profile" className="text-sm hover:text-orange-400">Profile</Link>
+                <button
+                  onClick={() => logout()}
+                  className="text-sm text-slate-100 hover:text-orange-400"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" className="px-4 py-2 rounded text-sm bg-white/90 text-black">Log In</Link>
+                <Link to="/signup" className="px-4 py-2 rounded text-sm bg-orange-500 text-white">Get Started</Link>
+              </>
+            )}
           </div>
         </nav>
-        )}
 
-<h2 className="font-bold text-5xl text-center my-10  flex justify-center gap-3 flex-wrap">
+        {/* Hero */}
+        <div className="max-w-6xl mx-auto mt-10">
+          <div className=" rounded-xl p-10 shadow-xl mx-4 md:mx-0">
+            <div className="text-center text-white">
+              <h2 className="font-bold text-5xl mb-6 flex justify-center gap-3 flex-wrap">
+                {['Plan', 'your', 'Next', 'Trip', 'With', 'Us!'].map((word, i) => (
+                  <motion.span
+                    key={i}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.18 }}
+                    className={word === 'Trip' ? 'text-orange-400' : ''}
+                  >
+                    {word}
+                  </motion.span>
+                ))}
+              </h2>
 
-  {["Plan", "your", "Next", "Trip", "With", "Us!"].map((word, i) => (
-    <motion.span
-      key={i}
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: i * 0.25 }}
-      className={word ===  "Trip"  ? "text-orange-400" : ""}
-    >
-      {word}
-    </motion.span>
-  ))}
-
-</h2>
+              <div className="mt-6 flex justify-center">
+                <div className="w-full md:w-3/4 lg:w-2/3">
+                  <div className="flex items-center rounded-full overflow-hidden shadow-lg border border-white/20 bg-white">
+                    <input
+                      type="text"
+                      placeholder="Mount Fuji, Japan"
+                      value={country}
+                      onChange={(e) => setCountry(e.target.value)}
+                      className="flex-1 px-6 py-4 outline-none text-black"
+                    />
+                    <button
+                      onClick={async () => {
+                        try {
+                          setLoading(true);
+                          await fetchTagLines();
+                          await fetchTrip();
+                        } catch (error) {
+                          console.error(error);
+                        } finally {
+                          setLoading(false);
+                        }
+                      }}
+                      disabled={!country || loading}
+                      className="bg-orange-500 text-white px-6 py-3"
+                    >
+                      {loading ? 'Planning...' : 'Start Planning'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
  {taglines.length > 0 && (
   <motion.p
@@ -330,22 +401,23 @@ function AppContent() {
 
         {/* Routes */}
         <Routes>
-          <Route path="/" element={user ? <Home trip={trip} /> : <Navigate to="/login" replace />} />
+          <Route path="/" element={<Home trip={trip} />} />
           <Route path="/login" element={user ? <Navigate to="/" replace /> : <Login />} />
           <Route path="/signup" element={user ? <Navigate to="/" replace /> : <Signup />} />
           <Route path="/profile" element={<PrivateRoute element={<Profile />} />} />
-          <Route path="*" element={<Navigate to="/login" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
 
         </div>
-      </Router>
     );
 }
 
 export default function App() {
   return (
     <AuthProvider>
-      <AppContent />
+      <Router>
+        <AppContent />
+      </Router>
     </AuthProvider>
   );
 }
