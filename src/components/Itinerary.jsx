@@ -271,7 +271,7 @@ const response = await axios.post(tripSearchApiUrl, {
 });
 console.log("response",response);
       const normalized = normalizeItinerary(response.data);
-    if (!normalized) throw new Error("The API response did not contain a valid itinerary.");
+    if (!normalized) console.log("The API response did not contain a valid itinerary.");
 
       setItinerary(normalized);
       setExpandedDay(1);
