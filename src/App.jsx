@@ -16,6 +16,7 @@ import {
   Routes,
   Route,
   Link,
+  NavLink,
   Navigate,
   useNavigate,
   useLocation
@@ -24,6 +25,7 @@ import { AuthProvider, useAuth } from "./components/AuthContext";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
 import Profile from "./components/Profile";
+import Itinerary from "./components/Itinerary";
 
 
 //  HOME PAGE
@@ -154,20 +156,21 @@ function Home({ trip }) {
   </div>
 </div>
 
-          {/* Book link (temporary) */}
-          <div className="bg-white/20 backdrop-blur-xl rounded-xl p-6 shadow mt-6 md:col-span-3">
-            <h3 className="text-2xl font-bold text-center text-orange-400 mb-3">Book a Package?</h3>
-            <p className="text-sm text-center text-slate-300">For now, click below to login and continue with booking.</p>
+          {!user && (
+            <div className="bg-white/20 backdrop-blur-xl rounded-xl p-6 shadow mt-6 md:col-span-3">
+              <h3 className="text-2xl font-bold text-center text-orange-400 mb-3">Book a Package?</h3>
+              <p className="text-sm text-center text-slate-300">For now, click below to login and continue with booking.</p>
 
-            <div className="mt-4 flex justify-center">
-              <button
-                onClick={() => navigate('/login')}
-                className="px-4 py-2  bg-amber-400 rounded text-white"
-              >
-                Book a Package?
-              </button>
+              <div className="mt-4 flex justify-center">
+                <button
+                  onClick={handleBook}
+                  className="px-4 py-2  bg-amber-400 rounded text-white"
+                >
+                  Book a Package?
+                </button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       )}
     </div>
@@ -290,14 +293,29 @@ function AppContent() {
             <h1 className="text-2xl font-bold text-orange-400 cursor-pointer hover:text-white">PlanMyTrip</h1>
           </div>
 
-          <div className="hidden md:flex items-center justify-center">
-            <div className="bg-white rounded-full px-3 py-1 flex items-center gap-6 border">
-              <Link to="/" className="px-4 py-1 rounded-full bg-black text-white">Home</Link>
-              <a href="#" className="text-sm text-slate-700">Travel Guides</a>
-              <a href="#" className="text-sm text-slate-700">Go Pro</a>
-              <a href="#" className="text-sm text-slate-700">Blog</a>
+          {user && (
+            <div className="hidden md:flex items-center justify-center">
+              <div className="bg-white rounded-xl px-3 py-1 flex items-center gap-6 border">
+                <NavLink
+                  to="/"
+                  className={({ isActive }) =>
+                    `px-4 py-1 rounded-xl text-sm ${isActive ? "bg-black text-white" : "text-slate-700 hover:text-orange-400"}`
+                  }
+                >
+                  Home
+                </NavLink>
+                <NavLink
+                  to="/plan-itinerary"
+                  className={({ isActive }) =>
+                    `px-4 py-1 rounded-xl text-sm ${isActive ? "bg-black text-white" : "text-slate-700 hover:text-orange-400"}`
+                  }
+                >
+                  Travel Guides
+                </NavLink>
+                <a href="#" className="text-sm text-slate-700">Blog</a>
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="flex items-center gap-4">
             {user ? (
@@ -320,6 +338,7 @@ function AppContent() {
         </nav>
 
         {/* Hero */}
+        {location.pathname !== '/login' && location.pathname !== '/signup' && location.pathname !== '/plan-itinerary' && (
         <div className="max-w-6xl mx-auto mt-10">
           <div className=" rounded-xl p-10 shadow-xl mx-4 md:mx-0">
             <div className="text-center text-white">
@@ -360,7 +379,7 @@ function AppContent() {
                         }
                       }}
                       disabled={!country || loading}
-                      className="bg-orange-500 text-white px-6 py-3"
+                      className="bg-orange-500 text-white px-6 py-3 cursor-pointer"
                     >
                       {loading ? 'Planning...' : 'Start Planning'}
                     </button>
@@ -370,6 +389,7 @@ function AppContent() {
             </div>
           </div>
         </div>
+        )}
 
  {taglines.length > 0 && (
   <motion.p
@@ -406,6 +426,7 @@ function AppContent() {
           <Route path="/signup" element={user ? <Navigate to="/" replace /> : <Signup />} />
           <Route path="/profile" element={<PrivateRoute element={<Profile />} />} />
           <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="/plan-itinerary" element={<PrivateRoute element={<Itinerary/>}/>} />
         </Routes>
 
         </div>
